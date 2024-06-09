@@ -8,6 +8,7 @@
     <UserSecretsId>e2f298c6-2f12-41a0-86f6-02beff9cd9f9</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>.</DockerfileContext>
+	  <DockerfileTag>minimal-api-test</DockerfileTag>
   </PropertyGroup>
 
   <ItemGroup>
