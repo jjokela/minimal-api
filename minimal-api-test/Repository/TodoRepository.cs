@@ -6,12 +6,12 @@ namespace minimal_api_test.Repository;
 
 public interface ITodoRepository
 {
-    public void Seed();
-    public Task<List<Todo>> GetTodosAsync();
-    public Task CreateTodoAsync(Todo todo);
-    public ValueTask<Todo?> GetTodoAsync(int id);
-    public Task<Todo?> UpdateTodoAsync(Todo inputTodo);
-    public Task<bool> DeleteTodoAsync(int id);
+    void Seed();
+    Task<List<Todo>> GetTodosAsync();
+    Task CreateTodoAsync(Todo todo);
+    ValueTask<Todo?> GetTodoAsync(int id);
+    Task<Todo?> UpdateTodoAsync(Todo inputTodo);
+    Task<bool> DeleteTodoAsync(int id);
 }
 
 public class TodoRepository(TodoDb context) : ITodoRepository

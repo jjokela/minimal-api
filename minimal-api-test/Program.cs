@@ -4,20 +4,36 @@ using minimal_api_test.Endpoints;
 using minimal_api_test.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddDbContext<TodoDb>(opt => opt.UseInMemoryDatabase("TodoList"));
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddTransient<DbContext, TodoDb>();
-builder.Services.AddTransient<ITodoRepository, TodoRepository>();
-
-builder.Logging.ClearProviders();
-builder.Logging.AddConsole();
-builder.Logging.AddDebug();
+ConfigureServices(builder.Services);
+ConfigureLogging(builder.Logging);
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
+SeedDatabase(app);
+
+TodoEndpoints.Register(app);
+
+app.Run();
+
+void ConfigureServices(IServiceCollection services)
 {
+    services.AddDbContext<TodoDb>(opt => opt.UseInMemoryDatabase("TodoList"));
+    services.AddDatabaseDeveloperPageExceptionFilter();
+    services.AddTransient<DbContext, TodoDb>();
+    services.AddTransient<ITodoRepository, TodoRepository>();
+}
+
+void ConfigureLogging(ILoggingBuilder logging)
+{
+    logging.ClearProviders();
+    logging.AddConsole();
+    logging.AddDebug();
+}
+
+void SeedDatabase(WebApplication application)
+{
+    using var scope = application.Services.CreateScope();
     var services = scope.ServiceProvider;
     var logger = services.GetRequiredService<ILogger<Program>>();
 
@@ -31,15 +47,3 @@ using (var scope = app.Services.CreateScope())
         logger.LogError(ex, "An error occurred seeding the DB.");
     }
 }
-
-var todosGroup = app.MapGroup("/todos");
-
-app.MapGet("/", () => "Hello World!");
-
-todosGroup.MapGet("/", TodoEndpoints.GetTodos);
-todosGroup.MapPost("/", TodoEndpoints.CreateTodo);
-todosGroup.MapGet("/{id}", TodoEndpoints.GetTodo);
-todosGroup.MapPut("/{id}", TodoEndpoints.UpdateTodo);
-todosGroup.MapDelete("/{id}", TodoEndpoints.DeleteTodo);
-
-app.Run();

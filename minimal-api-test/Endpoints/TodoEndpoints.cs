@@ -5,6 +5,19 @@ namespace minimal_api_test.Endpoints;
 
 public class TodoEndpoints
 {
+    public static void Register(WebApplication app)
+    {
+        var todosGroup = app.MapGroup("/todos");
+
+        app.MapGet("/", () => "Hello World!");
+
+        todosGroup.MapGet("/", GetTodos);
+        todosGroup.MapPost("/", CreateTodo);
+        todosGroup.MapGet("/{id}", GetTodo);
+        todosGroup.MapPut("/{id}", UpdateTodo);
+        todosGroup.MapDelete("/{id}", DeleteTodo);
+    }
+
     public static async Task<IResult> GetTodos(ITodoRepository repo)
     {
         return TypedResults.Ok(await repo.GetTodosAsync());
